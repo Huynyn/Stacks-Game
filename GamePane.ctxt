@@ -1,0 +1,14 @@
+#BlueJ class context
+comment0.target=GamePane
+comment0.text=\r\n\ Extends\ Pane\ class.\ \ A\ root\ that\ stores\ certain\ things\ to\ be\ stored.\ \ By\ changing\ root/pane,\ program\ can\ change\ "windows'\r\n\r\n\ This\ pane\ is\ dedicated\ to\ showcasing\ nodes\ associated\ with\ the\ game\r\n\r\n\ @author\ (Huy\ Nguyen)\r\n\ @version\ (Jan\ 9\ 2024)\r\n
+comment1.params=
+comment1.target=GamePane()
+comment2.params=strScore
+comment2.target=void\ setScore(java.lang.String)
+comment3.params=strScore
+comment3.target=void\ setHighScore(java.lang.String)
+comment4.params=
+comment4.target=void\ showLosingScreen()
+comment5.params=
+comment5.target=void\ resetScreen()
+numComments=6

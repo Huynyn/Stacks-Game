@@ -1,0 +1,12 @@
+#BlueJ class context
+comment0.target=Frames
+comment0.text=\r\n\ Write\ a\ description\ of\ class\ Frames\ here.\r\n\r\n\ @author\ (your\ name)\r\n\ @version\ (a\ version\ number\ or\ a\ date)\r\n
+comment1.params=b
+comment1.target=void\ start(byte)
+comment2.params=
+comment2.target=void\ stop()
+comment3.params=s
+comment3.target=void\ Running(short)
+comment4.params=
+comment4.target=void\ action()
+numComments=5

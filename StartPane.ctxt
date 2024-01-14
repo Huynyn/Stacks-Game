@@ -1,0 +1,6 @@
+#BlueJ class context
+comment0.target=StartPane
+comment0.text=\r\n\ Extends\ Pane\ class.\ \ A\ root\ that\ stores\ certain\ things\ to\ be\ stored.\ \ By\ changing\ root/pane,\ program\ can\ change\ "windows'\r\n\r\n\ This\ pane\ is\ dedicated\ to\ showcasing\ nodes\ associated\ with\ the\ start\ menu\r\n\r\n\ @author\ (Huy\ Nguyen)\r\n\ @version\ (Jan\ 9\ 2024)\r\n
+comment1.params=
+comment1.target=StartPane()
+numComments=2

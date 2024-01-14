@@ -1,0 +1,6 @@
+#BlueJ class context
+comment0.target=HuyNguyenTestClass
+comment0.text=\r\n\ Simple\ a\ test\ class.\ \ It\ will\ get\ the\ program\ running\ by\ calling\ \ start()\ in\ GameManager\r\n\r\n\ @author\ (Huy\ Nguyen)\r\n\ @version\ (Jan\ 9\ 2024)\r\n
+comment1.params=args
+comment1.target=void\ main(java.lang.String[])
+numComments=2
