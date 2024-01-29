@@ -1,8 +1,6 @@
 #BlueJ class context
 comment0.target=HelperMethods
-comment0.text=\r\n\ Write\ a\ description\ of\ class\ HelperMethods\ here.\r\n\r\n\ @author\ (your\ name)\r\n\ @version\ (a\ version\ number\ or\ a\ date)\r\n
-comment1.params=
-comment1.target=java.lang.String[]\ colorGradientGenerator()
-comment2.params=args
-comment2.target=void\ main(java.lang.String[])
-numComments=3
+comment0.text=\r\n\ Helper\ methods\ used\ in\ the\ program.\ The\ only\ helper\ method\ here\ is\ creating\ an\ color\ array\ for\ a\ gradient\ of\ colours\r\n\r\n\ @author\ (Huy\ Nguyen)\r\n\ @version\ (January\ 15th)\r\n
+comment1.params=shtIncrement
+comment1.target=javafx.scene.paint.Color[]\ createColourGradient(short)
+numComments=2

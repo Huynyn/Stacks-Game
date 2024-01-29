@@ -1,15 +1,9 @@
 import javafx.stage.Stage;
-import javafx.application.Application;
 import javafx.scene.Node;
-import javafx.scene.shape.Rectangle; 
 import java.util.ArrayList;
-import javafx.animation.AnimationTimer;
-import javafx.scene.control.Button;
 import java.util.Scanner;
 import java.util.*; 
 import java.io.*;
-import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadMXBean;
 
 /**
  * The game essentially runs from this class.  This class is a static class, meaning there is nowhere in the code that is 
@@ -20,360 +14,275 @@ import java.lang.management.ThreadMXBean;
  */
 public class GameManager
 {
-    private static final byte NUM_STARTING_SLIDERS = 15;
-    private final static byte FRAMES_PER_SECOND = 30; 
+    //final variables that set important values in the program
+    private static final byte NUM_STARTING_SLIDERS = 13; //number of starting sliders, basically the height of the starting tower... add one to how tall you really want
+    //the starting tower to be because it will shift down one slider once a moving slider is added
+    private final static String HIGHSCORE_LOCATION = "scores.txt";  //location of where highscores are saved    
 
-    private static GraphicsInterface graphicsInterface; 
-    private static ArrayList<Slider> lstSliders = new ArrayList<Slider>();
-    private final static String HIGHSCORE_LOCATION = "scores.txt"; 
-    private static AnimationTimer animationTimer;
-    private static Frames frames; 
-    public static boolean bolSide; 
+    private static GraphicsInterface graphicsInterface; //class that is the javafx application 
+    private static ArrayList<Slider> lstSliders = new ArrayList<Slider>(); //stores sliders
+    private static boolean bolSide; //used to store what side the slider comes in from -> true: left, false: right 
 
-    public static byte bytGameMode; //0 easy, 1 normal, 2 medium, 3 hard
+    //keeps track of the current gamemeode, each gamemode corresponding to a byte value
+    private static byte bytGameMode; //0 easy, 1 normal, 2 medium, 3 hard
 
-    private static short shtHighScoreEasy = 0; 
-    private static short shtHighScoreNormal = 0; 
-    private static short shtHighScoreMedium = 0; 
-    private static short shtHighScoreHard = 0; 
+    //high scores depending on each score for each gamemode 
+    private static short shtHighScoreEasy = 0; //easy
+    private static short shtHighScoreNormal = 0; //normal 
+    private static short shtHighScoreMedium = 0;  //medium
+    private static short shtHighScoreHard = 0; //hard
 
-    //create highscores for each type of gamemode
+    //stores the current score of the user 
     private static short shtCurrentScore; 
 
-    private static final ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
-    public static long getCurrentThreadCpuTime() {
-        return threadMXBean.getCurrentThreadCpuTime();
-    }
-
+    //Essentially launches the program 
     public static void launch()
     {
-        bolSide = true; 
-        graphicsInterface = new GraphicsInterface(); 
-
-        graphicsInterface.start(new Stage());
-
-        setTimer(); 
-        //setTimter2(); 
-
+        bolSide = true; //sets side to be true, meaning when the program runs, the first game played, the slider will always come in from the left
+        //Slider.setColors(HelperMethods.createColourGradient((short)23)); //set the colour gradient of the Slider class. Parameter can be changed to change
+        //how drastically the colour changes each slider.  Highest value: 255
         loadHighScore(); 
-        //System.out.println(shtHighScoreEasy); 
+        graphicsInterface = new GraphicsInterface(); //intitializes the application class that displays the gui's of the game
+        graphicsInterface.start(new Stage()); //call start method in application class to launch the window
     }
 
+    //method switches pane by calling switchPane() method in graphcisInterface
     public static void switchPane()
     {
         graphicsInterface.switchPane(); 
     }
-
-    public static void placeSlider()
+    
+    //quits the game by calling the graphics.interface quit method
+    public static void quit()
     {
-        animationTimer.stop(); 
-        System.out.println("place slider called");
-        //TEMPORARY VARIABLES
-        short shtX1 = 0;
-        short shtX2 = 0; 
-
-        short shtBX1 = (short)lstSliders.get(lstSliders.size() - 2).getRectangle().getLayoutX(); 
-        short shtBX2 = (short)(shtBX1 + lstSliders.get(lstSliders.size() - 2).getRectangle().getWidth()); 
-        short shtTX1 = (short)lstSliders.get(lstSliders.size() - 1).getRectangle().getLayoutX();  
-        short shtTX2 = (short)(shtTX1 + lstSliders.get(lstSliders.size() - 1).getRectangle().getWidth()); 
-
-        //System.out.println("bx1: " + shtBX1);
-        //System.out.println("bx2: " + shtBX2);
-        //System.out.println("tx1: " + shtTX1);
-        //System.out.println("tx2: " + shtTX2);
-
-        if (shtTX2 < shtBX1 || shtTX1 > shtBX2)
-        {
-            System.out.println("FAILED HERE");
-            System.out.println("shtTX2: " + shtTX2 + " < shtBX1" + shtBX1);
-            System.out.println("shtTX1: " + shtTX1 + " > shtBX2" + shtBX2);
-            gameLost(); 
-        }
-        else 
-        {
-            if (shtTX2 < shtBX2)
-            {
-                //game lost
-
-                shtX1 = shtBX1; 
-                shtX2 = shtTX2; 
-            }
-            else if (shtTX1 > shtBX1)
-            {
-
-                shtX1 = shtTX1; 
-                shtX2 = shtBX2;
-
-                //System.out.println(shtTX1 + " " + shtBX2);
-                //System.out.println(shtX1 + " " + shtX2);
-            }
-            else
-            {
-                shtX1 = shtBX1;
-                shtX2 = shtBX2; 
-            }
-
-            bolSide = !bolSide; 
-            lstSliders.get(lstSliders.size() - 1).placeSlider(shtX1, shtX2); 
-
-            shtCurrentScore++; 
-            graphicsInterface.setScore(shtCurrentScore + ""); 
-
-            addSlider();
-            animationTimer.start(); 
-        }
-
-        //animationTimer.start(); 
-        //frames.start(FRAMES_PER_SECOND);
-
-        //System.out.println(shtX1 + " " + shtX2);
-        //
-        //bolSide = !bolSide; 
-
-        /*
-        if(lstSliders.get(lstSliders.size() - 1).placeSlider(shtX1, shtX2))
-        {
-        addSlider();     
-        }
-        else 
-        {
-        System.out.println("game lost");
-        animationTimer.stop();  
-        return false; 
-        }
-         */
-        /*
-        lstSliders.get(lstSliders.size() - 1).placeSlider(shtX1, shtX2); 
-        addSlider(); 
-         */
-
+        graphicsInterface.quit(); 
     }
 
-    public static void pause()
-    {
-        animationTimer.stop(); 
-    }
-
-    private static void setTimer() //MANAGES FRAME RATE (actions that occur x amount of times each second) AND ANIMATION OF GAME
-    {       
-        final long LNG_INTERVAL = 1000000000/FRAMES_PER_SECOND;// animation timer defaults to nanoseconds -> 1000000000 nanoseconds is 1 second, holds number of nanoseconds needed 
-
-        //to be passes in order to have a frame to run SHT_FRAMESPERSECOND times a second
-        animationTimer = new AnimationTimer() { 
-            long lngPriorTime = 0;
-
-            @Override
-            public void handle(long lngCurrentTime) {
-                //MANAGES ACTIONS AT FRAMES_PER_SECOND SPEED 
-                if (lngCurrentTime - lngPriorTime >= LNG_INTERVAL) {
-                    {
-                        //move latest slider across the screen
-                        //System.out.println(lstSliders.get(lstSliders.size() - 1).getIfPlaced());
-                        //System.out.println("load: " + getCurrentThreadCpuTime());
-                        if (!lstSliders.get(lstSliders.size() - 1).getIfPlaced())
-                        {
-                            System.out.println("Ran");
-                            if(!lstSliders.get(lstSliders.size() - 1).shift((short)lstSliders.get(lstSliders.size() - 2).getRectangle().getLayoutX(),(short)(lstSliders.get(lstSliders.size() - 2).getRectangle().getLayoutX() + lstSliders.get(lstSliders.size() - 2).getRectangle().getWidth()), bolSide))
-                            {
-                                //System.out.println("runned");
-                                gameLost(); 
-                            };    
-                        }
-
-                        //System.out.println("Frames per second"); 
-                        lngPriorTime = lngCurrentTime; //set lngPriorTime to lngCurrentTime in order for timer to have to wait another LNG_INTERVAL for lngCurrentTime to be LNG_INTERVAL nanoseconds greator than lngPriorTime                    
-                    }
-                }
-            }
-        }; 
-    }
-
-    /*
-    private static void setTimter2()
-    {
-    frames = new Frames()
-    {
-    @Override
-    public void action()
-    {
-
-    if (!lstSliders.get(lstSliders.size() - 1).getIfPlaced())
-    {
-    System.out.println("Ran");
-    if(!lstSliders.get(lstSliders.size() - 1).shift(bolSide))
-    {
-    System.out.println("runned");
-    gameLost(); 
-    };   
-    }
-
-    //return true; 
-    }
-    }; 
-    }
-     */ 
-
+    //method called to start the game 
+    //pass in the gamemode as the setup for the game will differ depending on the game mode
     public static void gameStart(byte gameMode)
     {
-        if (gameMode == -1)
+        if (gameMode == -1) //-1 is passed in when there is no change in gamemode, recall the gameStart method.
         {
             gameStart(bytGameMode);
         }
         else {
+            //reset the game before starting the game to make sure the game is reset
             gameReset();
-            bytGameMode = gameMode; 
-            switch (gameMode)
-            {
 
+            //set that is saved in the class to passed in game mode
+            bytGameMode = gameMode; 
+
+            switch (gameMode) //depending on the gamemode
+            {
+                    //for game mode easy
                 case 0:
+                    //create starting tower NUMBER_STARTING_SLIDERS number of times
+                    //b starts at 1 because the y location of the slider is derived from a multiple (b) of the heigh of the slider
                     for (byte b = 1; b <= NUM_STARTING_SLIDERS; b++)
                     {
-                        lstSliders.add(new EasySlider(b));
-                        graphicsInterface.getGamePaneRoot().add(lstSliders.get(b-1).getRectangle()); 
+                        lstSliders.add(new EasySlider(b)); //add easy sliders to the list of sliders
+                        //add this newly created slider's rectangle node to the screen
+                        graphicsInterface.getGamePaneChildren().add(lstSliders.get(b-1).getRectangle()); 
 
                     }
-                    EasySlider.resetSpeed(); 
+
+                    //reset slider duration/reset its speed
+                    //during the game, a slider's speed will increase incremently by incrementing the same variable... reset this variable  
+                    EasySlider.resetDuration(); 
+                    //set the high score displayed on the screen to the highscore associated with this current mode
                     graphicsInterface.setHighScore(shtHighScoreEasy + "");
 
-                    break; 
+                    break;
+                    //for game mode normal
                 case 1: 
+                    //create starting tower NUMBER_STARTING_SLIDERS number of times
+                    //b starts at 1 because the y location of the slider is derived from a multiple (b) of the heigh of the slider
                     for (byte b = 1; b <= NUM_STARTING_SLIDERS; b++)
                     {
-                        lstSliders.add(new NormalSlider(b));
-                        graphicsInterface.getGamePaneRoot().add(lstSliders.get(b-1).getRectangle()); 
-
+                        lstSliders.add(new NormalSlider(b)); //normal hard sliders to the list of sliders
+                        //add this newly created slider's rectangle node to the screen
+                        graphicsInterface.getGamePaneChildren().add(lstSliders.get(b-1).getRectangle()); 
                     }
 
-                    NormalSlider.resetSpeed(); 
+                    //reset slider duration/reset its speed
+                    //during the game, a slider's speed will increase incremently by incrementing the same variable... reset this variable 
+                    NormalSlider.resetDuration(); 
 
+                    //set the high score displayed on the screen to the highscore associated with this current mode
                     graphicsInterface.setHighScore(shtHighScoreNormal + "");
                     break; 
+                    //for game mode medium
                 case 2: 
+                    //create starting tower NUMBER_STARTING_SLIDERS number of times
+                    //b starts at 1 because the y location of the slider is derived from a multiple (b) of the heigh of the slider
                     for (byte b = 1; b <= NUM_STARTING_SLIDERS; b++)
                     {
-                        lstSliders.add(new MediumSlider(b));
-                        graphicsInterface.getGamePaneRoot().add(lstSliders.get(b-1).getRectangle()); 
-
+                        lstSliders.add(new MediumSlider(b)); //add medium sliders to the list of sliders
+                        //add this newly created slider's rectangle node to the screen
+                        graphicsInterface.getGamePaneChildren().add(lstSliders.get(b-1).getRectangle()); 
                     }
 
-                    MediumSlider.resetSpeed(); 
+                    //reset slider duration/reset its speed
+                    //during the game, a slider's speed will increase incremently by incrementing the same variable... reset this variable 
+                    MediumSlider.resetDuration(); 
 
+                    //set the high score displayed on the screen to the highscore associated with this current mode
                     graphicsInterface.setHighScore(shtHighScoreMedium + "");
                     break; 
+                    //for game mode hard 
                 case 3: 
+                    //create starting tower NUMBER_STARTING_SLIDERS number of times 
+                    //b starts at 1 because the y location of the slider is derived from a multiple (b) of the heigh of the slider
                     for (byte b = 1; b <= NUM_STARTING_SLIDERS; b++)
                     {
-                        lstSliders.add(new HardSlider(b));
-                        graphicsInterface.getGamePaneRoot().add(lstSliders.get(b-1).getRectangle()); 
-
+                        lstSliders.add(new HardSlider(b)); //add hard sliders to the list of sliders
+                        //add this newly created slider's rectangle node to the screen
+                        graphicsInterface.getGamePaneChildren().add(lstSliders.get(b-1).getRectangle()); 
                     }
 
-                    HardSlider.resetSpeed(); 
+                    //reset slider duration/reset its speed
+                    //during the game, a slider's speed will increase incremently by incrementing the same variable... reset this variable 
+                    HardSlider.resetDuration(); 
 
+                    //set the high score displayed on the screen to the highscore associated with this current mode
                     graphicsInterface.setHighScore(shtHighScoreHard + "");
                     break; 
                     //ask teacher if you need default even if you know it's never going to run
             }
-            animationTimer.start();
-            addSlider();
-            //frames.start(FRAMES_PER_SECOND); 
-
+            addSlider(); //now add a moving slider to the screen
         }
-
     }
 
-    public static void gameLost()
-    {
-        animationTimer.stop(); 
-        //frames.stop(); 
-        graphicsInterface.showLosingGameScreen();
-
-        switch (bytGameMode)
-        {
-            case 0:
-                if (shtCurrentScore > shtHighScoreEasy)
-                {
-                    shtHighScoreEasy = shtCurrentScore; 
-                    saveHighScore(); 
-                }
-                break;
-            case 1:
-                if (shtCurrentScore > shtHighScoreNormal)
-                {
-                    shtHighScoreNormal = shtCurrentScore; 
-                    saveHighScore(); 
-                }
-                break;
-            case 2:
-                if (shtCurrentScore > shtHighScoreMedium)
-                {
-                    shtHighScoreMedium = shtCurrentScore; 
-                    saveHighScore(); 
-                }
-                break;
-            case 3:
-                if (shtCurrentScore > shtHighScoreHard)
-                {
-                    shtHighScoreHard = shtCurrentScore; 
-                    saveHighScore(); 
-                }
-                break;
-        }
-
-    }
-
+    //resets the game by basically clearing the stuff that was left behind by the previous running of the game
     private static void gameReset()
     {
-        Slider.resetWidth(); 
+        //reset the all sliders which returns their width to the starting width and sets the x location of the previous slider
+        Slider.resetSlider(); 
+        //resets the score to 0
         shtCurrentScore = 0; 
-        graphicsInterface.setScore(0 + ""); 
+        //sets the score on the screen back to the recently reset score, 0 
+        graphicsInterface.setScore(shtCurrentScore + ""); 
 
+        //keep removing the slider while sliders remain
         while (lstSliders.size() > 0)
         {
-            graphicsInterface.getGamePaneRoot().remove(lstSliders.get(0).getRectangle());
+            //remove the first slider's rectangle node from the screen
+            graphicsInterface.getGamePaneChildren().remove(lstSliders.get(0).getRectangle()); 
+            //remove the slider from the list of sliders
             lstSliders.remove(0);
         }
 
         graphicsInterface.resetGameScreen(); 
     }
 
-    private static void addSlider()
-    {
-        animationTimer.stop(); 
-        System.out.println("SHIFTED DOWN");
-        //System.out.println(lstSliders.size()); 
+    //calls when the game has been lost
+    public static void gameLost()
+    { 
+        //show the losing screen which is basically just showing certain nodes to the screen that let the user to actions after they have lost
+        graphicsInterface.showLosingGameScreen();
 
+        bolSide = !bolSide; //changed the side the sider comes in from
+
+        //depending on the game mode
         switch (bytGameMode)
         {
             case 0:
-                lstSliders.add(new EasySlider((byte)(NUM_STARTING_SLIDERS + 1), bolSide)); 
-
+                //check if the score of the player exceeded the score of this gamemode
+                if (shtCurrentScore > shtHighScoreEasy) //if so
+                {
+                    shtHighScoreEasy = shtCurrentScore; //set the a new high sccore for the score of this gamemode
+                    saveHighScore(); //save the newly updated highscores the file by calling the method that does this
+                }
                 break;
             case 1:
-                lstSliders.add(new NormalSlider((byte)(NUM_STARTING_SLIDERS + 1), bolSide)); 
 
+                //check if the score of the player exceeded the score of this gamemode
+                if (shtCurrentScore > shtHighScoreNormal) //if so
+                {
+                    shtHighScoreNormal = shtCurrentScore; //set the a new high sccore for the score of this gamemode
+                    saveHighScore(); //save the newly updated highscores the file by calling the method that does this
+                }
                 break;
             case 2:
-                lstSliders.add(new MediumSlider((byte)(NUM_STARTING_SLIDERS + 1), bolSide)); 
 
+                //check if the score of the player exceeded the score of this gamemode
+                if (shtCurrentScore > shtHighScoreMedium) //if so
+                {
+                    shtHighScoreMedium = shtCurrentScore; //save the newly updated highscores the file by calling the method that does this
+                    saveHighScore(); //save the newly updated highscores the file by calling the method that does this
+                }
                 break;
             case 3:
-                lstSliders.add(new HardSlider((byte)(NUM_STARTING_SLIDERS + 1), bolSide)); 
-
-                break; 
+                //check if the score of the player exceeded the score of this gamemode
+                if (shtCurrentScore > shtHighScoreHard) //if so
+                {
+                    shtHighScoreHard = shtCurrentScore; //save the newly updated highscores the file by calling the method that does this
+                    saveHighScore(); //save the newly updated highscores the file by calling the method that does this
+                }
+                break;
         }
 
-        graphicsInterface.getGamePaneRoot().add(lstSliders.get(lstSliders.size() - 1).getRectangle()); 
-
-        shiftDown(); 
-        animationTimer.start();
     }
 
-    private static void shiftDown()
+    //method places a slider onto the screen    
+    public static void placeSlider()
+    {   
+        //call the placeSlider method on the slider currently moving (the latest slider in the list), passing in the side the slider came in from 
+        if(lstSliders.get(lstSliders.size() - 1).placeSlider(bolSide, (byte)(NUM_STARTING_SLIDERS))) //placeSlider returns a boolean. if true, slider successfully place
+        {
+            bolSide = !bolSide; //changed the side the sider comes in from
+
+            shtCurrentScore++; //increase score
+            graphicsInterface.setScore(shtCurrentScore + ""); //show increased score on display
+
+            //adds a new slider as the current one has been placed
+            addSlider();
+        }
+        else //slider not successfully placed
+        {
+            //that means the game was lost, so call gameLost() function 
+            gameLost(); 
+        }
+
+    }
+
+    //add a *moving* slider from the screen 
+    private static void addSlider()
     {
-        graphicsInterface.getGamePaneRoot().remove(lstSliders.get(0).getRectangle());
+        switch (bytGameMode) //depending on the game mdoe
+        {
+            case 0: //easy
+                //add an easy slider to the screen, passing number of sliders plus 1 to put it one above the exisiting tower and the side it should come in from
+                lstSliders.add(new EasySlider((byte)(NUM_STARTING_SLIDERS + 1), bolSide)); 
+                break;
+            case 1:  //normal
+                //add an normal slider to the screen, passing number of sliders plus 1 to put it one above the exisiting tower and the side it should come in from
+                lstSliders.add(new NormalSlider((byte)(NUM_STARTING_SLIDERS + 1), bolSide)); 
+                break;
+            case 2: // medium
+                //add an medium slider to the screen, passing number of sliders plus 1 to put it one above the exisiting tower and the side it should come in from
+                lstSliders.add(new MediumSlider((byte)(NUM_STARTING_SLIDERS + 1), bolSide)); 
+                break;
+            case 3: //hard
+                //add an hard slider to the screen, passing number of sliders plus 1 to put it one above the exisiting tower and the side it should come in from
+                lstSliders.add(new HardSlider((byte)(NUM_STARTING_SLIDERS + 1), bolSide)); 
+                break; 
+        }
+        //add this newly created slider's rectangle to the scren
+        graphicsInterface.getGamePaneChildren().add(lstSliders.get(lstSliders.size() - 1).getRectangle());
+        //shift the entire tower down so it doesn't go above the screen
+        shiftTowerDown(); 
+    }
+
+    //method shifts all the sliders on the screen down by one slider
+    private static void shiftTowerDown()
+    {
+        //remove the slider at the bottom of the tower because it's going offscreen now -- no need to waste memory 
+        graphicsInterface.getGamePaneChildren().remove(lstSliders.get(0).getRectangle());
         lstSliders.remove(0); 
 
+        //for all the remaining sliders, call their shiftDown method. 
         for (Slider s : lstSliders)
         {
             s.shiftDown(); 
@@ -381,11 +290,14 @@ public class GameManager
         //graphicsInterface.getGamePaneRoot().remove(1); 
     }
 
+    //save high scores
     private static void saveHighScore()
     {
+        //set name of printwriter
         PrintWriter out;
 
         try {
+            //intitialize print writer using file location of scores
             out = new PrintWriter(new FileWriter(HIGHSCORE_LOCATION));
 
             //have to send them out every time because text file needs to be formatted: score easy, score normal, score medium, score hard
@@ -394,24 +306,31 @@ public class GameManager
             out.println(shtHighScoreMedium);
             out.println(shtHighScoreHard);
 
+            //close printwriter   
             out.close();
         } catch (FileNotFoundException e) {
-            System.out.println("Error: Cannot open file     for writing");
+            System.out.println("Error: Cannot open file for writing");
         } catch (IOException e) {
-            System.out.println("Error: Cannot write to     file");
+            System.out.println("Error: Cannot write to file");
         }
     }
 
+    //load the high scores from the fiel
     public static void loadHighScore()
     {
+        //set name of scanner
         Scanner in; 
         try {
+            //initialize scanner using with text file location of scores
             in = new Scanner(new FileReader(HIGHSCORE_LOCATION));
+
+            //grab highscores using scanner
             shtHighScoreEasy = in.nextShort(); 
             shtHighScoreNormal = in.nextShort(); 
             shtHighScoreMedium = in.nextShort(); 
             shtHighScoreHard = in.nextShort(); 
 
+            //close scanner
             in.close();
         } catch (FileNotFoundException e) {
             System.out.println("Error: Cannot open file for reading");
@@ -420,18 +339,6 @@ public class GameManager
         } catch (IOException e) {
             System.out.println("Error: Cannot read from file");
         }
-
     }
 
-    public static void quit()
-    {
-        graphicsInterface.quit(); 
-    }
-
-    /*
-    public static void quit()
-    {
-    graphicsInterfacequit(); 
-    }
-     */
 }

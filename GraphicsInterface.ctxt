@@ -1,12 +1,12 @@
 #BlueJ class context
 comment0.target=GraphicsInterface
-comment0.text=\r\n\ Inherits\ javaFx\ application\ class.\ This\ is\ basically\ the\ window\ of\ the\ application\ and\ it\ will\ display\ and\ give\ functionality\ to\ the\ scenes\ in\ the\ program\ --\ the\ sole\ \r\n\ functionality\ \ this\ class\ is\ used\ for.\r\n\ \r\n\r\n\ @author\ (Huy\ Nguyen)\r\n\ @version\ (Jan\ 9\ 2024)\r\n
+comment0.text=\r\n\ Inherits\ javaFx\ application\ class.\ This\ is\ basically\ the\ window\ of\ the\ application\ and\ it\ will\ display\ and\ give\ functionality\ to\ the\ scenes\ in\ the\ program\ --\ the\ sole\ \r\n\ functionality\ this\ class\ is\ used\ for.\r\n\ \r\n\r\n\ @author\ (Huy\ Nguyen)\r\n\ @version\ (Jan\ 9\ 2024)\r\n
 comment1.params=stage
 comment1.target=void\ start(javafx.stage.Stage)
 comment2.params=
 comment2.target=void\ switchPane()
 comment3.params=
-comment3.target=javafx.collections.ObservableList\ getGamePaneRoot()
+comment3.target=javafx.collections.ObservableList\ getGamePaneChildren()
 comment4.params=
 comment4.target=void\ showLosingGameScreen()
 comment5.params=

@@ -1,10 +1,10 @@
 #BlueJ class context
 comment0.target=NormalSlider
-comment0.text=\r\n\ Write\ a\ description\ of\ class\ DefaultSlider\ here.\r\n\r\n\ @author\ (your\ name)\r\n\ @version\ (a\ version\ number\ or\ a\ date)\r\n
+comment0.text=\r\n\ Subclass\ of\ slider\ that\ has\ overload\ constructor\ to\ set\ values\ and\ run\ methods\ in\ parent\ class\ depending\r\n\ on\ whether\ it\ is\ a\ slider\ on\ the\ starting\ tower\ or\ a\ moving\ slider\r\n\ Child\ sliders\ can\ control\ their\ own\ difficulty\ by\ changing\ the\ starting\ duration\ of\ slider,\ its\ fastest\ duration\r\n\ and\ how\ quickly\ the\ duration\ increases\r\n\ \r\n\ this\ is\ for\ a\ normal\ difficulty\ slider\r\n\ \r\n\r\n\ @author\ (Huy\ Nguyen)\r\n\ @version\ (January\ 14th\ 2024)\r\n
 comment1.params=b
 comment1.target=NormalSlider(byte)
 comment2.params=b\ bolSide
 comment2.target=NormalSlider(byte,\ boolean)
 comment3.params=
-comment3.target=void\ resetSpeed()
+comment3.target=void\ resetDuration()
 numComments=4
