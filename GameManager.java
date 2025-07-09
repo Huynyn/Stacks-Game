@@ -8,7 +8,7 @@ import java.io.*;
 /**
  * The game essentially runs from this class.  This class is a static class, meaning there is nowhere in the code that is 
  * has been initialized.  There is one gameManager and it manages other classes in program and mediates their interactions between each other.  
- *
+ *this is a test
  * @author (Huy Nguyen)
  * @version (Jan 9 2024)
  */
